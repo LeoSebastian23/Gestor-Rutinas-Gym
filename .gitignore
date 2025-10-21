@@ -1,0 +1,28 @@
+﻿# Archivos temporales y de compilación
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.cache
+*.log
+*.db
+
+# Configuración de usuario de Visual Studio
+*.vscode/
+*.userprefs
+
+# Archivos generados
+*.dll
+*.exe
+*.pdb
+*.mdb
+
+# SQLite DB local (no se sube a GitHub)
+*.sqlite
+*.db
+
+# Archivos de respaldo
+*.bak
+*.tmp
+*.swp
