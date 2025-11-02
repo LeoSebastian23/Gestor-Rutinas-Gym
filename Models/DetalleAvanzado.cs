@@ -9,21 +9,29 @@ namespace Gestor_de_Rutinas___GYM.Models
     public class DetalleAvanzado
     {
         public int IdDetalle { get; set; }
-        public int IdEjercicio { get; set; }
+
+        // FK al ejercicio al que pertenece
+        public int EjercicioId { get; set; }
+
+        // Datos específicos de detalle avanzado
         public double PorcentajeRM { get; set; }
         public double RM { get; set; }
         public string Objetivo { get; set; } = string.Empty;
+        public string? Nota { get; set; }
 
-        public Ejercicio Ejercicio { get; set; } = null!;
-
+        // Constructor vacío (necesario para EF Core)
         public DetalleAvanzado() { }
 
-        public DetalleAvanzado(double porcentajeRM, double pesoUtilizado, string objetivo)
+        // Constructor para crear nuevos detalles manualmente
+        public DetalleAvanzado(double porcentajeRM, double rm, string objetivo, string? nota = null)
         {
             PorcentajeRM = porcentajeRM;
-            RM = RM;
+            RM = rm;
             Objetivo = objetivo;
+            Nota = nota;
         }
+
+        // Método de utilidad: calcula peso según %RM
         public double CalcularPeso() => RM * (PorcentajeRM / 100);
     }
 }

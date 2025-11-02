@@ -12,20 +12,26 @@ namespace Gestor_de_Rutinas___GYM.Models
         public string Nombre { get; set; } = string.Empty;
         public string Apellido { get; set; } = string.Empty;
         public DateTime FechaNacimiento { get; set; }
-        public string Objetivo { get; set; } = string.Empty;
 
-        // Relación: un cliente tiene muchas rutinas
+        public decimal Peso { get; set; } 
+
+        public decimal Altura { get; set; }
+        public string Objetivo { get; set; } = string.Empty;
+        
+
         public List<Rutina> Rutinas { get; set; } = new();
 
         // --- Constructores ---
         public Cliente() { }
 
-        public Cliente(string nombre, string apellido, DateTime fechaNacimiento, string objetivo)
+        public Cliente(string nombre, string apellido, DateTime fechaNacimiento, decimal peso, decimal altura, string objetivo)
         {
             Nombre = nombre;
             Apellido = apellido;
             FechaNacimiento = fechaNacimiento;
             Objetivo = objetivo;
+            Peso = peso;
+            Altura = altura;
         }
     }
 }

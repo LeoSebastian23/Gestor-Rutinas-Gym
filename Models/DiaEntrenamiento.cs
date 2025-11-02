@@ -12,10 +12,6 @@ namespace Gestor_de_Rutinas___GYM.Models
         public string DiaSemana { get; set; } = string.Empty;
         public string GrupoMuscular { get; set; } = string.Empty;
 
-        // Relación: un día pertenece a una rutina
-        public int IdRutina { get; set; }
-        public Rutina Rutina { get; set; } = null!;
-
         // Relación: un día tiene varios ejercicios
         public List<Ejercicio> Ejercicios { get; set; } = new();
 

@@ -13,7 +13,6 @@ namespace Gestor_de_Rutinas___GYM.Models
         public int DuracionSemana { get; set; }
         public string Descripcion { get; set; } = string.Empty;
 
-        // Relación: una rutina tiene varios días
         public List<DiaEntrenamiento> Dias { get; set; } = new();
 
         // --- Constructores ---

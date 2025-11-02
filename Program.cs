@@ -1,3 +1,5 @@
+using Gestor_de_Rutinas___GYM.Views;
+
 namespace Gestor_de_Rutinas___GYM
 {
     internal static class Program
@@ -8,10 +10,21 @@ namespace Gestor_de_Rutinas___GYM
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+
+            // Inicializa la configuración de la aplicación
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+
+            // Abre el formulario de clientes(FormClientes)
+            //Application.Run(new FormClientes());
+
+            // Abre el formulario de Ejercicios Base
+            //Application.Run(new FormEjercicioBase());
+
+            // Abre el formulario de Rutina
+            //Application.Run(new FormRutina());
+
+            // Abre Menu Principal
+            Application.Run(new MenuPrincipal());
         }
     }
 }

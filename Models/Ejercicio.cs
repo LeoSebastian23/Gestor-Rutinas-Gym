@@ -11,9 +11,7 @@ namespace Gestor_de_Rutinas___GYM.Models
         public int IdEjercicio { get; set; }
 
         // FK a EjercicioBase
-        public int IdEjercicioBase { get; set; }
         public EjercicioBase EjercicioBase { get; set; } = null!;
-
 
         public int Series { get; set; }
         public int Repeticiones { get; set; }
@@ -26,9 +24,9 @@ namespace Gestor_de_Rutinas___GYM.Models
         // --- Constructores ---
         public Ejercicio() { }
 
-        public Ejercicio(int idEjercicioBase, int series, int repeticiones, decimal descanso, string notas = "")
+        public Ejercicio( EjercicioBase ejercicio, int series, int repeticiones, decimal descanso, string notas = "")
         {
-            IdEjercicioBase = idEjercicioBase;
+            EjercicioBase = ejercicio;
             Series = series;
             Repeticiones = repeticiones;
             Descanso = descanso;
