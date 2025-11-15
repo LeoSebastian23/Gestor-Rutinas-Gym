@@ -1,11 +1,7 @@
 ﻿using Gestor_de_Rutinas___GYM.Models;
 using Gestor_de_Rutinas___GYM.Services;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Gestor_de_Rutinas___GYM.Controllers
 {
@@ -18,39 +14,80 @@ namespace Gestor_de_Rutinas___GYM.Controllers
 
         private Rutina _rutinaActual = new();
 
-
+        // --- CRUD Rutina ---
         public void CrearRutina(string nombre, int duracion, string descripcion)
         {
             _rutinaActual = new Rutina(nombre, duracion, descripcion);
         }
 
+        public void GuardarRutina()
+        {
+            if (_rutinaActual == null)
+                throw new InvalidOperationException("No hay rutina creada para guardar.");
+
+            _rutinaService.Crear(_rutinaActual);
+        }
+
+        public List<Rutina> ObtenerTodas() => _rutinaService.ObtenerTodas();
+
+        public Rutina ObtenerRutinaActual() => _rutinaActual;
+
+        public void ActualizarRutina(Rutina rutina)
+        {
+            if (rutina == null)
+                throw new ArgumentNullException(nameof(rutina));
+
+            _rutinaService.Actualizar(rutina);
+        }
+
+        public void EliminarRutina(int id)
+        {
+            if (id <= 0)
+                throw new ArgumentException("ID inválido para eliminar rutina.");
+
+            _rutinaService.Eliminar(id);
+        }
+
+        // --- Días ---
         public void AgregarDia(string diaSemana, string grupoMuscular)
         {
             var dia = new DiaEntrenamiento(diaSemana, grupoMuscular);
             _rutinaActual.Dias.Add(dia);
         }
 
+        // Método para eliminar un día de entrenamiento
+        public void EliminarDia(DiaEntrenamiento dia)
+        {
+            if (dia == null)
+                throw new ArgumentNullException(nameof(dia));
+
+            _rutinaActual.Dias.Remove(dia);
+        }
+
+        // --- Ejercicios ---
         public void AgregarEjercicio(DiaEntrenamiento dia, EjercicioBase baseEjercicio, int series, int reps, decimal descanso, string notas)
         {
+            if (dia == null)
+                throw new ArgumentNullException(nameof(dia));
+
             var ejercicio = new Ejercicio(baseEjercicio, series, reps, descanso, notas);
             dia.Ejercicios.Add(ejercicio);
         }
 
-        public async Task GuardarRutinaAsync()
+        // Método para eliminar un ejercicio específico
+        public void EliminarEjercicio(DiaEntrenamiento dia, Ejercicio ejercicio)
         {
-            await _rutinaService.CrearAsync(_rutinaActual);
-        }
-        public async Task<List<Rutina>> ObtenerTodasAsync()
-        {
-            return await _rutinaService.ObtenerTodasAsync();
-        }
-        public Rutina ObtenerRutinaActual() => _rutinaActual;
+            if (dia == null)
+                throw new ArgumentNullException(nameof(dia));
+            if (ejercicio == null)
+                throw new ArgumentNullException(nameof(ejercicio));
 
-        public async Task<List<EjercicioBase>> ObtenerEjerciciosBaseAsync()
-        {
-            return await _ejercicioBaseService.ObtenerTodosAsync();
+            dia.Ejercicios.Remove(ejercicio);
         }
 
+        // --- Ejercicio Base ---
+        public List<EjercicioBase> ObtenerEjerciciosBase() => _ejercicioBaseService.ObtenerTodos();
     }
 }
+
 

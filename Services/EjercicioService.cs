@@ -13,10 +13,11 @@ namespace Gestor_de_Rutinas___GYM.Services
     {
         private readonly EjercicioRepository _repo = new();
 
-        public async Task<List<Ejercicio>> ObtenerTodosAsync() => await _repo.GetAllAsync();
-        public async Task CrearAsync(Ejercicio ejercicio) => await _repo.AddAsync(ejercicio);
-        public async Task ActualizarAsync(Ejercicio ejercicio) => await _repo.UpdateAsync(ejercicio);
-        public async Task EliminarAsync(int id) => await _repo.DeleteAsync(id);
+        public List<Ejercicio> ObtenerTodos() => _repo.GetAll();
+        public void Crear(Ejercicio ejercicio) => _repo.Add(ejercicio);
+        public void Actualizar(Ejercicio ejercicio) => _repo.Update(ejercicio);
+        public void Eliminar(int id) => _repo.Delete(id);
     }
 }
+
 

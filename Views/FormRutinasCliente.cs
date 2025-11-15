@@ -1,7 +1,6 @@
 ﻿using Gestor_de_Rutinas___GYM.Controllers;
 using Gestor_de_Rutinas___GYM.Models;
-using Gestor_de_Rutinas___GYM.Services;
-using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Gestor_de_Rutinas___GYM.Views
@@ -9,192 +8,199 @@ namespace Gestor_de_Rutinas___GYM.Views
     public partial class FormRutinasCliente : Form
     {
         private readonly Cliente _cliente;
-        private readonly ClienteController _clienteController;
-        private readonly RutinaController _rutinaController;
+        private readonly ClienteController _clienteController = new();
+        private readonly RutinaController _rutinaController = new();
 
         public FormRutinasCliente(Cliente cliente)
         {
             InitializeComponent();
             _cliente = cliente ?? throw new ArgumentNullException(nameof(cliente));
-            _clienteController = new ClienteController();
-            _rutinaController = new RutinaController();
-
-            // ⚙️ Evitamos que cargue antes de InitializeComponent()
-            Load += FormRutinasCliente_Load;
+            Load += (_, _) => InicializarVista();
         }
 
-        private async void FormRutinasCliente_Load(object sender, EventArgs e)
+        private void InicializarVista()
         {
             lblTitulo.Text = $"Rutinas de {_cliente.Nombre} {_cliente.Apellido}";
-            await CargarRutinasAsync();
-            await CargarRutinasDisponiblesAsync();
+            ConfigurarEstiloFormulario();
             ConfigurarColumnasRutinas();
+            CargarRutinas();
+            CargarRutinasDisponibles();
         }
+
+        // ESTILO
+        private void ConfigurarEstiloFormulario()
+        {
+            BackColor = ColorTranslator.FromHtml("#484848");
+            ForeColor = Color.White;
+
+            lblTitulo.Font = new Font("Segoe UI", 18, FontStyle.Bold);
+            lblTitulo.ForeColor = Color.White;
+            lblTitulo.BackColor = ColorTranslator.FromHtml("#484848");
+            lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
+
+            ConfigurarGrid(dgvRutinasAsignadas);
+
+            EstilizarBoton(btnAsignarRutina, ColorTranslator.FromHtml("#0f928c"));
+            EstilizarBoton(btnEliminarRutina, ColorTranslator.FromHtml("#beee3b"), Color.Black);
+        }
+
+        private static void ConfigurarGrid(DataGridView dgv)
+        {
+            dgv.BackgroundColor = Color.FromArgb(25, 25, 25);
+            dgv.DefaultCellStyle.BackColor = Color.FromArgb(40, 40, 40);
+            dgv.DefaultCellStyle.ForeColor = Color.White;
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(70, 70, 70);
+
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = ColorTranslator.FromHtml("#0f928c");
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgv.ColumnHeadersDefaultCellStyle.Font = new("Segoe UI", 10, FontStyle.Bold);
+
+            dgv.EnableHeadersVisualStyles = false;
+            dgv.BorderStyle = BorderStyle.None;
+            dgv.RowHeadersVisible = false;
+            dgv.ReadOnly = true;
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv.AllowUserToAddRows = false;
+            dgv.AllowUserToDeleteRows = false;
+        }
+
+        private static void EstilizarBoton(Button b, Color color, Color? textColor = null)
+        {
+            b.BackColor = color;
+            b.FlatStyle = FlatStyle.Flat;
+            b.FlatAppearance.BorderSize = 0;
+            b.ForeColor = textColor ?? Color.White;
+            b.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            b.Cursor = Cursors.Hand;
+        }
+
+        // COLUMNAS
         private void ConfigurarColumnasRutinas()
         {
             dgvRutinasAsignadas.AutoGenerateColumns = false;
             dgvRutinasAsignadas.Columns.Clear();
 
-            // 🏋️ Nombre
-            dgvRutinasAsignadas.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Nombre",
-                DataPropertyName = "Nombre",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                FillWeight = 35
-            });
+            void AddCol(string header, string prop, int fill) =>
+                dgvRutinasAsignadas.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    HeaderText = header,
+                    DataPropertyName = prop,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                    FillWeight = fill
+                });
 
-            // ⏱️ Duración
-            dgvRutinasAsignadas.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Duración (Semanas)",
-                DataPropertyName = "DuracionSemanas",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                FillWeight = 20
-            });
+            AddCol("Nombre", "Nombre", 40);
+            AddCol("Semanas", "DuracionSemana", 20);
+            AddCol("Descripción", "Descripcion", 40);
 
-            // 📝 Descripción
-            dgvRutinasAsignadas.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Descripción",
-                DataPropertyName = "Descripcion",
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                FillWeight = 35
-            });
-
-            // 🔍 Botón “Ver Detalle”
-            var btnDetalle = new DataGridViewButtonColumn
+            dgvRutinasAsignadas.Columns.Add(new DataGridViewButtonColumn
             {
                 HeaderText = "Detalle",
-                Text = "🔍 Ver Detalle",
+                Text = "Ver",
                 UseColumnTextForButtonValue = true,
-                Width = 110
-            };
-            dgvRutinasAsignadas.Columns.Add(btnDetalle);
+                Width = 90
+            });
 
-            // 📅 Botón “Ver Días”
-            var btnDias = new DataGridViewButtonColumn
-            {
-                HeaderText = "Días",
-                Text = "📅 Ver Días",
-                UseColumnTextForButtonValue = true,
-                Width = 110
-            };
-            dgvRutinasAsignadas.Columns.Add(btnDias);
-
-            // 🎨 Estilo
-            dgvRutinasAsignadas.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvRutinasAsignadas.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-
-            // 🎯 Evento Click
             dgvRutinasAsignadas.CellClick -= DgvRutinasAsignadas_CellClick;
             dgvRutinasAsignadas.CellClick += DgvRutinasAsignadas_CellClick;
         }
-
-        private async Task CargarRutinasAsync()
+        // CARGA DE DATOS
+        private void CargarRutinas()
         {
-            if (_cliente == null)
-            {
-                MessageBox.Show("No se encontró el cliente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            var rutinas = await _clienteController.ObtenerRutinasDeClienteAsync(_cliente.IdCliente);
-            dgvRutinasAsignadas.DataSource = rutinas ?? new List<Rutina>();
+            dgvRutinasAsignadas.DataSource =
+                _clienteController.ObtenerRutinasDeCliente(_cliente.IdCliente)
+                ?? new List<Rutina>();
         }
 
-        private async Task CargarRutinasDisponiblesAsync()
+        private void CargarRutinasDisponibles()
         {
-            var todas = await _rutinaController.ObtenerTodasAsync();
-            cmbRutinasDisponibles.DataSource = todas;
+            var rutinas = _rutinaController.ObtenerTodas();
+            cmbRutinasDisponibles.DataSource = rutinas;
             cmbRutinasDisponibles.DisplayMember = "Nombre";
             cmbRutinasDisponibles.ValueMember = "IdRutina";
         }
 
-        private async void btnAsignarRutina_Click(object sender, EventArgs e)
+        // ACCIONES
+        private void btnAsignarRutina_Click(object sender, EventArgs e)
         {
+            if (cmbRutinasDisponibles.SelectedItem is not Rutina rutina)
+            {
+                Msg("Seleccione una rutina válida.");
+                return;
+            }
+
             try
             {
-                if (cmbRutinasDisponibles.SelectedItem is not Rutina rutinaSeleccionada)
+                _clienteController.AsignarRutina(_cliente.IdCliente, rutina.IdRutina);
+
+                CargarRutinas();
+                dgvRutinasAsignadas.Refresh();
+
+                // Seleccionar automáticamente la rutina recién asignada
+                foreach (DataGridViewRow row in dgvRutinasAsignadas.Rows)
                 {
-                    MessageBox.Show("Seleccione una rutina válida.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    if (row.DataBoundItem is Rutina r && r.IdRutina == rutina.IdRutina)
+                    {
+                        row.Selected = true;
+                        break;
+                    }
                 }
 
-                await _clienteController.AsignarRutinaAsync(_cliente.IdCliente, rutinaSeleccionada.IdRutina);
-
-                // 🔄 Actualizar la lista de rutinas en tiempo real
-                await CargarRutinasAsync();
-
-                MessageBox.Show("Rutina asignada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Msg("Rutina asignada correctamente.");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al asignar rutina: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Error("asignar rutina", ex);
             }
         }
 
-        private async void btnEliminarRutina_Click(object sender, EventArgs e)
+
+        private void btnEliminarRutina_Click(object sender, EventArgs e)
         {
+            if (dgvRutinasAsignadas.CurrentRow?.DataBoundItem is not Rutina rutina) return;
+
+            if (!Confirm($"¿Seguro de eliminar la rutina '{rutina.Nombre}'?")) return;
+
             try
             {
-                if (dgvRutinasAsignadas.CurrentRow?.DataBoundItem is not Rutina rutinaSeleccionada)
-                {
-                    MessageBox.Show("Seleccione una rutina para eliminar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                var confirm = MessageBox.Show(
-                    $"¿Seguro que desea eliminar la rutina '{rutinaSeleccionada.Nombre}' del cliente?",
-                    "Confirmar eliminación",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
-                );
-
-                if (confirm == DialogResult.Yes)
-                {
-                    await _clienteController.EliminarRutinaAsync(_cliente.IdCliente, rutinaSeleccionada.IdRutina);
-
-                    // Recargar la grilla sin cerrar el formulario
-                    await CargarRutinasAsync();
-
-                    MessageBox.Show("Rutina eliminada correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+                _clienteController.EliminarRutina(_cliente.IdCliente, rutina.IdRutina);
+                CargarRutinas();
+                Msg("Rutina eliminada correctamente.");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al eliminar rutina: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Error("eliminar rutina", ex);
             }
         }
 
+        // CLICK EN LA TABLA (ABRIR DETALLE)
         private void DgvRutinasAsignadas_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
+            if (dgvRutinasAsignadas.Columns[e.ColumnIndex].HeaderText != "Detalle") return;
 
-            var rutina = dgvRutinasAsignadas.Rows[e.RowIndex].DataBoundItem as Rutina;
-            if (rutina == null) return;
+            if (dgvRutinasAsignadas.Rows[e.RowIndex].DataBoundItem is not Rutina rutina)
+                return;
 
-            // Si se presionó el botón de Detalle
-            if (dgvRutinasAsignadas.Columns[e.ColumnIndex].HeaderText == "Detalle")
+            var detalle = new FormRutinaDetalle(rutina)
             {
-                MessageBox.Show(
-                    $"{rutina.Nombre}\n\n" +
-                    $" Duración: {rutina.DuracionSemana} semanas\n" +
-                    $" Descripción:\n{rutina.Descripcion}",
-                    "Detalle de Rutina",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
-            }
+                StartPosition = FormStartPosition.CenterParent
+            };
 
-            // Si se presionó el botón de Días
-            else if (dgvRutinasAsignadas.Columns[e.ColumnIndex].HeaderText == "Días")
-            {
-                var formDias = new FormDiasRutina(rutina);
-                formDias.ShowDialog();
-            }
+            detalle.ShowDialog(this);
         }
 
+        // HELPERS
+        private static void Msg(string t) =>
+            MessageBox.Show(t, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        private static bool Confirm(string txt) =>
+            MessageBox.Show(txt, "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
+
+        private static void Error(string accion, Exception ex) =>
+            MessageBox.Show($"Error al {accion}: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 }
+
+
 

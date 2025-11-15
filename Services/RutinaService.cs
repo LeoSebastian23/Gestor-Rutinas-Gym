@@ -13,14 +13,12 @@ namespace Gestor_de_Rutinas___GYM.Services
     {
         private readonly RutinaRepository _repo = new();
 
-        public async Task<List<Rutina>> ObtenerTodasAsync()
-        {
-            return await _repo.GetAllAsync();
-        }
-        public async Task<Rutina?> ObtenerPorIdAsync(int id) => await _repo.GetByIdAsync(id);
-        public async Task CrearAsync(Rutina rutina) => await _repo.AddAsync(rutina);
-        public async Task ActualizarAsync(Rutina rutina) => await _repo.UpdateAsync(rutina);
-        public async Task EliminarAsync(int id) => await _repo.DeleteAsync(id);
+        public List<Rutina> ObtenerTodas() => _repo.GetAll();
+        public Rutina? ObtenerPorId(int id) => _repo.GetById(id);
+        public void Crear(Rutina rutina) => _repo.Add(rutina);
+        public void Actualizar(Rutina rutina) => _repo.Update(rutina);
+        public void Eliminar(int id) => _repo.Delete(id);
     }
 }
+
 

@@ -11,47 +11,43 @@ namespace Gestor_de_Rutinas___GYM.Repositories
 {
     public class ClienteRepository
     {
-        private readonly GymContext _context;
+        private readonly GymContext _context = new();
 
-        public ClienteRepository()
+        public List<Cliente> GetAll()
         {
-            _context = new GymContext();
-        }
-
-        public async Task<List<Cliente>> GetAllAsync()
-        {
-            return await _context.Clientes
+            return _context.Clientes
                 .Include(c => c.Rutinas)
-                .ToListAsync();
+                .ToList();
         }
 
-        public async Task<Cliente?> GetByIdAsync(int id)
+        public Cliente? GetById(int id)
         {
-            return await _context.Clientes
+            return _context.Clientes
                 .Include(c => c.Rutinas)
-                .FirstOrDefaultAsync(c => c.IdCliente == id);
+                .FirstOrDefault(c => c.IdCliente == id);
         }
 
-        public async Task AddAsync(Cliente cliente)
+        public void Add(Cliente cliente)
         {
-            await _context.Clientes.AddAsync(cliente);
-            await _context.SaveChangesAsync();
+            _context.Clientes.Add(cliente);
+            _context.SaveChanges();
         }
 
-        public async Task UpdateAsync(Cliente cliente)
+        public void Update(Cliente cliente)
         {
             _context.Clientes.Update(cliente);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        public async Task DeleteAsync(int id)
+        public void Delete(int id)
         {
-            var cliente = await _context.Clientes.FindAsync(id);
+            var cliente = _context.Clientes.Find(id);
             if (cliente != null)
             {
                 _context.Clientes.Remove(cliente);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
         }
     }
 }
+

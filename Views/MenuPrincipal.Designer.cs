@@ -32,13 +32,12 @@ namespace Gestor_de_Rutinas___GYM.Views
             // 
             lblTitulo.BackColor = Color.FromArgb(40, 40, 40);
             lblTitulo.Dock = DockStyle.Top;
-            lblTitulo.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            lblTitulo.Font = new Font("Segoe UI", 34F, FontStyle.Bold);
             lblTitulo.ForeColor = Color.White;
             lblTitulo.Location = new Point(0, 0);
             lblTitulo.Name = "lblTitulo";
             lblTitulo.Size = new Size(1120, 133);
             lblTitulo.TabIndex = 0;
-            lblTitulo.Text = "🏋️‍♂️  Gestor de Rutinas - GYM";
             lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panelClientes
@@ -52,9 +51,6 @@ namespace Gestor_de_Rutinas___GYM.Views
             panelClientes.Size = new Size(285, 199);
             panelClientes.TabIndex = 1;
             panelClientes.Click += panelClientes_Click;
-            panelClientes.Paint += panelClientes_Paint;
-            panelClientes.MouseEnter += panel_MouseEnter;
-            panelClientes.MouseLeave += panel_MouseLeave;
             // 
             // panelRutinas
             // 
@@ -67,9 +63,6 @@ namespace Gestor_de_Rutinas___GYM.Views
             panelRutinas.Size = new Size(285, 199);
             panelRutinas.TabIndex = 2;
             panelRutinas.Click += panelRutinas_Click;
-            panelRutinas.Paint += panelRutinas_Paint;
-            panelRutinas.MouseEnter += panel_MouseEnter;
-            panelRutinas.MouseLeave += panel_MouseLeave;
             // 
             // panelEjercicios
             // 
@@ -82,9 +75,6 @@ namespace Gestor_de_Rutinas___GYM.Views
             panelEjercicios.Size = new Size(285, 199);
             panelEjercicios.TabIndex = 3;
             panelEjercicios.Click += panelEjercicios_Click;
-            panelEjercicios.Paint += panelEjercicios_Paint;
-            panelEjercicios.MouseEnter += panel_MouseEnter;
-            panelEjercicios.MouseLeave += panel_MouseLeave;
             // 
             // btnSalir
             // 

@@ -14,35 +14,36 @@ namespace Gestor_de_Rutinas___GYM.Repositories
     {
         private readonly GymContext _context = new();
 
-        public async Task<List<DiaEntrenamiento>> GetAllAsync()
+        public List<DiaEntrenamiento> GetAll()
         {
-            return await _context.DiasEntrenamiento
+            return _context.DiasEntrenamiento
                 .Include(d => d.Ejercicios)
                     .ThenInclude(e => e.EjercicioBase)
-                .ToListAsync();
+                .ToList();
         }
 
-        public async Task AddAsync(DiaEntrenamiento dia)
+        public void Add(DiaEntrenamiento dia)
         {
-            await _context.DiasEntrenamiento.AddAsync(dia);
-            await _context.SaveChangesAsync();
+            _context.DiasEntrenamiento.Add(dia);
+            _context.SaveChanges();
         }
 
-        public async Task UpdateAsync(DiaEntrenamiento dia)
+        public void Update(DiaEntrenamiento dia)
         {
             _context.DiasEntrenamiento.Update(dia);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        public async Task DeleteAsync(int id)
+        public void Delete(int id)
         {
-            var dia = await _context.DiasEntrenamiento.FindAsync(id);
+            var dia = _context.DiasEntrenamiento.Find(id);
             if (dia != null)
             {
                 _context.DiasEntrenamiento.Remove(dia);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
         }
     }
 }
+
 

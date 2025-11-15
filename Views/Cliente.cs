@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Windows.Forms;
 using Gestor_de_Rutinas___GYM.Controllers;
 using Gestor_de_Rutinas___GYM.Models;
@@ -14,172 +14,252 @@ namespace Gestor_de_Rutinas___GYM.Views
         public FormClientes()
         {
             InitializeComponent();
-            // Todo lo “custom” lo hacemos fuera del diseñador:
-            PostInitStyleSafe();
+            AplicarEstilo();
         }
 
-        private void PostInitStyleSafe()
+        private void FormClientes_Load(object sender, EventArgs e)
         {
-            // Colores y estilo
-            this.BackColor = Color.FromArgb(30, 30, 30);
+            CargarClientes();
+            ConfigurarColumnaRutinas();
+        }
 
-            lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
-            lblTitulo.Font = new Font("Segoe UI", 18, FontStyle.Bold);
+        // ≡ ESTILO ==============================================================
+        private void AplicarEstilo()
+        {
+            BackColor = ColorTranslator.FromHtml("#484848");
             lblTitulo.ForeColor = Color.White;
-            lblTitulo.BackColor = Color.FromArgb(40, 40, 40);
+            lblTitulo.Font = new("Segoe UI", 18, FontStyle.Bold);
 
             panelCampos.BackColor = Color.FromArgb(45, 45, 45);
+            panelCampos.Controls.OfType<Label>().ToList()
+                .ForEach(l => l.ForeColor = Color.White);
 
-            // Botones
-            StyleButtonFlat(btnAgregar, Color.FromArgb(46, 204, 113));
-            StyleButtonFlat(btnVerTodos, Color.FromArgb(52, 152, 219));
-            StyleButtonFlat(btnVerDetalle, Color.FromArgb(231, 76, 60));
+            ConfigurarBoton(btnAgregar, "#0f928c");
+            ConfigurarBoton(btnModificar, "#00c9d2");
+            ConfigurarBoton(btnEliminar, "#beee3b", Color.Black);
 
-            // Labels
-            foreach (Control c in panelCampos.Controls)
-            {
-                if (c is Label l) l.ForeColor = Color.White;
-            }
-
-            // DataGridView moderno
-            dgvClientes.BackgroundColor = Color.FromArgb(25, 25, 25);
-            dgvClientes.BorderStyle = BorderStyle.None;
-            dgvClientes.EnableHeadersVisualStyles = false;
-            dgvClientes.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 152, 219);
-            dgvClientes.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgvClientes.DefaultCellStyle.BackColor = Color.FromArgb(40, 40, 40);
-            dgvClientes.DefaultCellStyle.ForeColor = Color.White;
-            dgvClientes.DefaultCellStyle.SelectionBackColor = Color.FromArgb(64, 64, 64);
-            dgvClientes.RowHeadersVisible = false;
-            dgvClientes.GridColor = Color.DimGray;
-            dgvClientes.Font = new Font("Segoe UI", 10);
+            ConfigurarGrid(dgvClientes);
         }
 
-        private static void StyleButtonFlat(Button b, Color back)
+        private static void ConfigurarBoton(Button btn, string color, Color? texto = null)
         {
-            b.BackColor = back;
-            b.FlatStyle = FlatStyle.Flat;
-            b.FlatAppearance.BorderSize = 0;
-            b.ForeColor = Color.White;
-            b.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            btn.BackColor = ColorTranslator.FromHtml(color);
+            btn.ForeColor = texto ?? Color.White;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 0;
+            btn.Font = new("Segoe UI", 10, FontStyle.Bold);
+            btn.Cursor = Cursors.Hand;
         }
 
-        private async void FormClientes_Load(object sender, EventArgs e)
+        private static void ConfigurarGrid(DataGridView dgv)
         {
-            await CargarClientesAsync();
+            dgv.BackgroundColor = Color.FromArgb(25, 25, 25);
+            dgv.DefaultCellStyle.BackColor = Color.FromArgb(40, 40, 40);
+            dgv.DefaultCellStyle.ForeColor = Color.White;
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(70, 70, 70);
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = ColorTranslator.FromHtml("#0f928c");
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgv.EnableHeadersVisualStyles = false;
+            dgv.ReadOnly = true;
+            dgv.BorderStyle = BorderStyle.None;
+            dgv.AllowUserToAddRows = dgv.AllowUserToDeleteRows = false;
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        }
 
-            // Evita columnas duplicadas si ya existen
-            if (!dgvClientes.Columns.Contains("btnVerRutinas"))
-            {
-                var colRutinas = new DataGridViewButtonColumn
+        // ≡ DATOS ===============================================================
+        private void CargarClientes()
+        {
+            var clientes = _controller.ObtenerClientes()
+                .Select(c => new
                 {
-                    Name = "btnVerRutinas",
-                    HeaderText = "Rutinas",
-                    Text = "Ver Rutinas",
-                    UseColumnTextForButtonValue = true,
-                    Width = 120,
-                };
+                    c.IdCliente,
+                    c.Nombre,
+                    c.Apellido,
+                    Edad = CalcularEdad(c.FechaNacimiento),
+                    Peso = $"{c.Peso} kg",
+                    Altura = $"{c.Altura} m",
+                    c.Objetivo
+                })
+                .ToList();
 
-                dgvClientes.Columns.Add(colRutinas);
-                dgvClientes.CellClick += DgvClientes_CellClick;
+            dgvClientes.DataSource = clientes;
+            dgvClientes.Columns["IdCliente"].Visible = false;
+        }
 
-                // 💅 Aplicamos un estilo visual moderno al botón
-                dgvClientes.CellFormatting += (s, e) =>
-                {
-                    if (dgvClientes.Columns[e.ColumnIndex].Name == "btnVerRutinas")
-                    {
-                        e.CellStyle.BackColor = Color.FromArgb(46, 204, 113);
-                        e.CellStyle.ForeColor = Color.White;
-                        e.CellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
-                        e.CellStyle.SelectionBackColor = Color.FromArgb(39, 174, 96);
-                    }
-                };
+
+        private void ConfigurarColumnaRutinas()
+        {
+            if (dgvClientes.Columns.Contains("btnVerRutinas")) return;
+
+            dgvClientes.Columns.Add(new DataGridViewButtonColumn
+            {
+                Name = "btnVerRutinas",
+                HeaderText = "Rutinas",
+                Text = "📋 Ver",
+                UseColumnTextForButtonValue = true,
+                Width = 90
+            });
+
+            dgvClientes.CellClick += DgvClientes_CellClick;
+        }
+
+        // ≡ VALIDACIÓN =========================================================
+        private bool SeleccionInvalida(string msj)
+        {
+            if (dgvClientes.CurrentRow == null)
+            {
+                Msg(msj);
+                return true;
             }
+            return false;
         }
 
-        private async Task CargarClientesAsync()
+        private bool IntentarParseDecimal(TextBox txt, string campo, out decimal valor)
         {
-            dgvClientes.DataSource = await _controller.ObtenerClientesAsync();
+            if (!decimal.TryParse(txt.Text, out valor))
+            {
+                Msg($"El valor de {campo} no es válido.");
+                return false;
+            }
+            return true;
         }
 
-        private async void btnAgregar_Click(object sender, EventArgs e)
+        // ≡ CRUD ===============================================================
+        private void btnAgregar_Click(object sender, EventArgs e)
         {
+            if (!IntentarParseDecimal(txtPeso, "Peso", out decimal peso)) return;
+            if (!IntentarParseDecimal(txtAltura, "Altura", out decimal altura)) return;
+
             try
             {
-                var nombre = txtNombre.Text.Trim();
-                var apellido = txtApellido.Text.Trim();
-                var fecha = dtpFechaNacimiento.Value.Date; // solo fecha
-                var peso = decimal.Parse(txtPeso.Text);
-                var altura = decimal.Parse(txtAltura.Text);
-                var objetivo = txtObjetivo.Text.Trim();
+                _controller.CrearCliente(
+                    txtNombre.Text.Trim(),
+                    txtApellido.Text.Trim(),
+                    dtpFechaNacimiento.Value,
+                    peso,
+                    altura,
+                    txtObjetivo.Text.Trim()
+                );
 
-                await _controller.CrearClienteAsync(nombre, apellido, fecha, peso, altura, objetivo);
-                await CargarClientesAsync();
-                LimpiarCampos();
-
-                MessageBox.Show("Cliente agregado correctamente.", "Éxito",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CargarClientes();
+                Limpiar();
+                Msg("Cliente agregado correctamente ✅");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al agregar cliente: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Msg($"Error al agregar: {ex.Message}", "Error", MessageBoxIcon.Error);
             }
         }
 
-        private void LimpiarCampos()
+        private void btnModificar_Click(object sender, EventArgs e)
         {
-            txtNombre.Clear();
-            txtApellido.Clear();
-            txtPeso.Clear();
-            txtAltura.Clear();
-            txtObjetivo.Clear();
-            dtpFechaNacimiento.Value = DateTime.Today;
+            if (SeleccionInvalida("Seleccione un cliente para modificar.")) return;
+
+            int id = (int)dgvClientes.CurrentRow.Cells["IdCliente"].Value;
+            var cliente = _controller.BuscarPorId(id);
+            if (cliente == null) return;
+
+            if (!IntentarParseDecimal(txtPeso, "Peso", out decimal peso)) return;
+            if (!IntentarParseDecimal(txtAltura, "Altura", out decimal altura)) return;
+
+            try
+            {
+                cliente.Nombre = txtNombre.Text.Trim();
+                cliente.Apellido = txtApellido.Text.Trim();
+                cliente.FechaNacimiento = dtpFechaNacimiento.Value;
+                cliente.Peso = peso;
+                cliente.Altura = altura;
+                cliente.Objetivo = txtObjetivo.Text.Trim();
+
+                _controller.ActualizarCliente(cliente);
+                CargarClientes();
+
+                Msg("Cliente modificado correctamente ✅");
+            }
+            catch (Exception ex)
+            {
+                Msg($"Error al modificar: {ex.Message}", "Error", MessageBoxIcon.Error);
+            }
         }
 
-        private async void btnVerTodos_Click(object sender, EventArgs e)
+        private void btnEliminar_Click(object sender, EventArgs e)
         {
-            await CargarClientesAsync();
+            if (SeleccionInvalida("Seleccione un cliente para eliminar.")) return;
+
+            int id = (int)dgvClientes.CurrentRow.Cells["IdCliente"].Value;
+            if (!Confirm("¿Está seguro de eliminar este cliente?")) return;
+
+            _controller.EliminarCliente(id);
+            CargarClientes();
+
+            Msg("Cliente eliminado correctamente ✅");
         }
 
         private void btnVerDetalle_Click(object sender, EventArgs e)
         {
-            if (dgvClientes.CurrentRow == null) return;
+            if (SeleccionInvalida("Seleccione un cliente.")) return;
 
-            var cliente = (Cliente)dgvClientes.CurrentRow.DataBoundItem;
+            int id = (int)dgvClientes.CurrentRow.Cells["IdCliente"].Value;
+            var c = _controller.BuscarPorId(id);
+            if (c == null) return;
 
-            MessageBox.Show(
-                $"Cliente: {cliente.Nombre} {cliente.Apellido}\n" +
-                $"Edad: {DateTime.Today.Year - cliente.FechaNacimiento.Year} años\n" +
-                $"Peso: {cliente.Peso} kg\n" +
-                $"Altura: {cliente.Altura} m\n" +
-                $"Objetivo: {cliente.Objetivo}",
-                "Detalle de Cliente",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
+            Msg($"👤 {c.Nombre} {c.Apellido}\n" +
+                $"Edad: {CalcularEdad(c.FechaNacimiento)} años\n" +
+                $"Peso: {c.Peso} kg\n" +
+                $"Altura: {c.Altura} m\n" +
+                $"Objetivo: {c.Objetivo}",
+                "Detalle de Cliente");
         }
+
+        private void btnVerTodos_Click(object sender, EventArgs e) => CargarClientes();
+
+
+        // ≡ EVENTOS EXTRA ======================================================
         private void DgvClientes_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && dgvClientes.Columns[e.ColumnIndex].Name == "btnVerRutinas")
-            {
-                // Obtenemos el cliente actual
-                if (dgvClientes.Rows[e.RowIndex].DataBoundItem is Cliente clienteSeleccionado)
-                {
-                    using (var formRutinas = new FormRutinasCliente(clienteSeleccionado))
-                    {
-                        formRutinas.ShowDialog(); // abre modal
-                    }
+            if (e.RowIndex < 0) return;
+            if (dgvClientes.Columns[e.ColumnIndex].Name != "btnVerRutinas") return;
 
-                    // Refresca la grilla al cerrar el modal
-                    _ = CargarClientesAsync();
-                }
-                else
-                {
-                    MessageBox.Show("No se pudo obtener el cliente seleccionado.", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-            }
+            int id = (int)dgvClientes.Rows[e.RowIndex].Cells["IdCliente"].Value;
+            var cliente = _controller.BuscarPorId(id);
+            if (cliente == null) return;
+
+            new FormRutinasCliente(cliente)
+            {
+                StartPosition = FormStartPosition.CenterParent
+            }.ShowDialog(this);
+        }
+
+
+        // ≡ HELPERS ============================================================
+        private static int CalcularEdad(DateTime fecha)
+        {
+            int edad = DateTime.Today.Year - fecha.Year;
+            if (fecha > DateTime.Today.AddYears(-edad)) edad--;
+            return edad;
+        }
+
+        private void Limpiar()
+        {
+            foreach (var t in new[] { txtNombre, txtApellido, txtPeso, txtAltura, txtObjetivo })
+                t.Clear();
+
+            dtpFechaNacimiento.Value = DateTime.Today;
+        }
+
+        private static void Msg(string texto, string titulo = "Aviso", MessageBoxIcon icono = MessageBoxIcon.Information)
+        {
+            MessageBox.Show(texto, titulo, MessageBoxButtons.OK, icono);
+        }
+
+        private static bool Confirm(string txt)
+        {
+            return MessageBox.Show(txt, "Confirmar", MessageBoxButtons.YesNo,
+                   MessageBoxIcon.Question) == DialogResult.Yes;
         }
     }
 }
+
+
+
+

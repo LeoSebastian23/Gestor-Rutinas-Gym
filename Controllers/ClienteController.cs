@@ -6,54 +6,53 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// Se encarga solo de coordinar llamadas entre la vista (Forms) y el ClienteService.
 namespace Gestor_de_Rutinas___GYM.Controllers
 {
     public class ClienteController
     {
         private readonly ClienteService _service = new();
 
-        public async Task<List<Cliente>> ObtenerClientesAsync()
+        public List<Cliente> ObtenerClientes()
         {
-            return await _service.ObtenerTodosAsync();
+            return _service.ObtenerTodos();
         }
 
-        public async Task CrearClienteAsync(string nombre, string apellido, DateTime fechaNacimiento, decimal peso, decimal altura, string objetivo)
+        public void CrearCliente(string nombre, string apellido, DateTime fechaNacimiento, decimal peso, decimal altura, string objetivo)
         {
             var cliente = new Cliente(nombre, apellido, fechaNacimiento, peso, altura, objetivo);
-            await _service.CrearAsync(cliente);
+            _service.Crear(cliente);
         }
 
-        public async Task ActualizarClienteAsync(Cliente cliente)
+        public void ActualizarCliente(Cliente cliente)
         {
-            await _service.ActualizarAsync(cliente);
+            _service.Actualizar(cliente);
         }
 
-        public async Task EliminarClienteAsync(int id)
+        public void EliminarCliente(int id)
         {
-            await _service.EliminarAsync(id);
+            _service.Eliminar(id);
         }
 
-        public async Task<Cliente?> BuscarPorIdAsync(int id)
+        public Cliente? BuscarPorId(int id)
         {
-            return await _service.ObtenerPorIdAsync(id);
-        }
-        public async Task AsignarRutinaAsync(int idCliente, int idRutina)
-        {
-            var service = new ClienteService();
-            await service.AsignarRutinaAsync(idCliente, idRutina);
+            return _service.ObtenerPorId(id);
         }
 
-        public async Task EliminarRutinaAsync(int idCliente, int idRutina)
+        public void AsignarRutina(int idCliente, int idRutina)
         {
-            var service = new ClienteService();
-            await service.EliminarRutinaAsync(idCliente, idRutina);
+            _service.AsignarRutina(idCliente, idRutina);
         }
 
-        public async Task<List<Rutina>> ObtenerRutinasDeClienteAsync(int idCliente)
+        public void EliminarRutina(int idCliente, int idRutina)
         {
-            var service = new ClienteService();
-            return await service.ObtenerRutinasDeClienteAsync(idCliente);
+            _service.EliminarRutina(idCliente, idRutina);
         }
 
+        public List<Rutina> ObtenerRutinasDeCliente(int idCliente)
+        {
+            return _service.ObtenerRutinasDeCliente(idCliente);
+        }
     }
 }
+

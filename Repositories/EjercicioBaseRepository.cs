@@ -11,44 +11,40 @@ namespace Gestor_de_Rutinas___GYM.Repositories
 {
     public class EjercicioBaseRepository
     {
-        private readonly GymContext _context;
+        private readonly GymContext _context = new();
 
-        public EjercicioBaseRepository()
+        public List<EjercicioBase> GetAll()
         {
-            _context = new GymContext();
+            return _context.EjerciciosBase.ToList();
         }
 
-        public async Task<List<EjercicioBase>> GetAllAsync()
+        public EjercicioBase? GetById(int id)
         {
-            return await _context.EjerciciosBase.ToListAsync();
+            return _context.EjerciciosBase.Find(id);
         }
 
-        public async Task<EjercicioBase?> GetByIdAsync(int id)
+        public void Add(EjercicioBase ejercicio)
         {
-            return await _context.EjerciciosBase.FindAsync(id);
+            _context.EjerciciosBase.Add(ejercicio);
+            _context.SaveChanges();
         }
 
-        public async Task AddAsync(EjercicioBase ejercicio)
-        {
-            await _context.EjerciciosBase.AddAsync(ejercicio);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateAsync(EjercicioBase ejercicio)
+        public void Update(EjercicioBase ejercicio)
         {
             _context.EjerciciosBase.Update(ejercicio);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        public async Task DeleteAsync(int id)
+        public void Delete(int id)
         {
-            var ejercicio = await _context.EjerciciosBase.FindAsync(id);
+            var ejercicio = _context.EjerciciosBase.Find(id);
             if (ejercicio != null)
             {
                 _context.EjerciciosBase.Remove(ejercicio);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
         }
     }
 }
+
 

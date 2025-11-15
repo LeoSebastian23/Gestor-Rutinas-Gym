@@ -58,6 +58,7 @@
             label3 = new Label();
             label4 = new Label();
             label5 = new Label();
+            label6 = new Label();
             ((System.ComponentModel.ISupportInitialize)numDuracion).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvDias).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvEjercicios).BeginInit();
@@ -122,18 +123,18 @@
             // 
             // btnNuevoEjercicioBase
             // 
-            btnNuevoEjercicioBase.Location = new Point(827, 655);
+            btnNuevoEjercicioBase.Location = new Point(827, 651);
             btnNuevoEjercicioBase.Name = "btnNuevoEjercicioBase";
-            btnNuevoEjercicioBase.Size = new Size(75, 29);
+            btnNuevoEjercicioBase.Size = new Size(75, 33);
             btnNuevoEjercicioBase.TabIndex = 16;
             btnNuevoEjercicioBase.Text = "➕ Nuevo";
             btnNuevoEjercicioBase.Click += btnNuevoEjercicioBase_Click;
             // 
             // btnGuardarRutina
             // 
-            btnGuardarRutina.Location = new Point(940, 657);
+            btnGuardarRutina.Location = new Point(940, 651);
             btnGuardarRutina.Name = "btnGuardarRutina";
-            btnGuardarRutina.Size = new Size(84, 52);
+            btnGuardarRutina.Size = new Size(84, 58);
             btnGuardarRutina.TabIndex = 17;
             btnGuardarRutina.Text = "Guardar Rutina";
             btnGuardarRutina.Click += btnGuardarRutina_Click;
@@ -170,7 +171,7 @@
             dgvDias.Location = new Point(0, 0);
             dgvDias.Name = "dgvDias";
             dgvDias.RowHeadersWidth = 51;
-            dgvDias.Size = new Size(994, 258);
+            dgvDias.Size = new Size(1003, 258);
             dgvDias.TabIndex = 0;
             // 
             // dgvEjercicios
@@ -180,7 +181,7 @@
             dgvEjercicios.Location = new Point(0, 0);
             dgvEjercicios.Name = "dgvEjercicios";
             dgvEjercicios.RowHeadersWidth = 51;
-            dgvEjercicios.Size = new Size(994, 254);
+            dgvEjercicios.Size = new Size(1003, 254);
             dgvEjercicios.TabIndex = 0;
             // 
             // btnAgregarEjercicio
@@ -235,7 +236,7 @@
             // splitContainer.Panel2
             // 
             splitContainer.Panel2.Controls.Add(dgvEjercicios);
-            splitContainer.Size = new Size(994, 516);
+            splitContainer.Size = new Size(1003, 516);
             splitContainer.SplitterDistance = 258;
             splitContainer.TabIndex = 9;
             // 
@@ -245,7 +246,7 @@
             cmbEjercicioBase.AccessibleName = "";
             cmbEjercicioBase.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbEjercicioBase.FormatString = "Catalogo de ejercicios";
-            cmbEjercicioBase.Location = new Point(20, 668);
+            cmbEjercicioBase.Location = new Point(20, 676);
             cmbEjercicioBase.Name = "cmbEjercicioBase";
             cmbEjercicioBase.Size = new Size(180, 28);
             cmbEjercicioBase.TabIndex = 15;
@@ -298,9 +299,20 @@
             label5.TabIndex = 22;
             label5.Text = "Crear Ejercicio nuevo";
             // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(81, 653);
+            label6.Name = "label6";
+            label6.Size = new Size(65, 20);
+            label6.TabIndex = 23;
+            label6.Text = "Ejercicio";
+            label6.TextAlign = ContentAlignment.MiddleLeft;
+            // 
             // FormRutina
             // 
-            ClientSize = new Size(1044, 716);
+            ClientSize = new Size(1053, 716);
+            Controls.Add(label6);
             Controls.Add(label5);
             Controls.Add(label4);
             Controls.Add(label3);
@@ -345,6 +357,7 @@
         private Label label3;
         private Label label4;
         private Label label5;
+        private Label label6;
     }
 }
 

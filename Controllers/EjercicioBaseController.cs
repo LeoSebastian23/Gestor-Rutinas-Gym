@@ -7,32 +7,34 @@ using System.Threading.Tasks;
 using Gestor_de_Rutinas___GYM.Models;
 using Gestor_de_Rutinas___GYM.Services;
 
+// Se encarga solo de coordinar llamadas entre la vista (Forms) y el EjercicioBaseService.
 namespace Gestor_de_Rutinas___GYM.Controllers
 {
     public class EjercicioBaseController
     {
         private readonly EjercicioBaseService _service = new();
 
-        public async Task<List<EjercicioBase>> ObtenerEjerciciosAsync()
+        public List<EjercicioBase> ObtenerEjercicios()
         {
-            return await _service.ObtenerTodosAsync();
+            return _service.ObtenerTodos();
         }
 
-        public async Task CrearEjercicioBaseAsync(string nombre, string grupo, string descripcion)
+        public void CrearEjercicioBase(string nombre, string grupo, string descripcion)
         {
             var ejercicio = new EjercicioBase(nombre, grupo, descripcion);
-            await _service.CrearAsync(ejercicio);
+            _service.Crear(ejercicio);
         }
 
-        public async Task ActualizarEjercicioAsync(EjercicioBase ejercicio)
+        public void ActualizarEjercicio(EjercicioBase ejercicio)
         {
-            await _service.ActualizarAsync(ejercicio);
+            _service.Actualizar(ejercicio);
         }
 
-        public async Task EliminarEjercicioAsync(int id)
+        public void EliminarEjercicio(int id)
         {
-            await _service.EliminarAsync(id);
+            _service.Eliminar(id);
         }
     }
 }
+
 
