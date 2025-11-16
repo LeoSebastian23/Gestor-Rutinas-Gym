@@ -22,7 +22,10 @@ namespace Gestor_de_Rutinas___GYM.Views
         {
             txtNombre.Text = _rutina.Nombre;
             txtDescripcion.Text = _rutina.Descripcion;
-            numDuracion.Value = _rutina.DuracionSemana;
+            numDuracion.Value = Math.Max(
+         _rutina.DuracionSemana,
+         numDuracion.Minimum
+     );
         }
 
         private void btnGuardar_Click(object sender, EventArgs e)

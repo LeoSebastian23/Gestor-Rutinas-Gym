@@ -96,7 +96,7 @@ namespace Gestor_de_Rutinas___GYM.Views
                 return;
             }
 
-            _controller.CrearRutina(txtNombre.Text, (int)numDuracion.Value, txtDescripcion.Text);
+            _controller.CrearRutina(txtNombre.Text, (int)numDuracionSemana.Value, txtDescripcion.Text);
             diasBinding.DataSource = _controller.ObtenerRutinaActual().Dias;
             Msg("Rutina creada. Ahora puede agregar días de entrenamiento.");
         }
@@ -138,9 +138,34 @@ namespace Gestor_de_Rutinas___GYM.Views
 
         private void btnGuardarRutina_Click(object sender, EventArgs e)
         {
+            // Validaciones antes de guardar
+            if (string.IsNullOrWhiteSpace(txtNombre.Text))
+            {
+                Msg("El nombre de la rutina no puede estar vacío.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtDescripcion.Text))
+            {
+                Msg("La descripción no puede estar vacía.");
+                return;
+            }
+
+            if (!_controller.ObtenerRutinaActual().Dias.Any())
+            {
+                Msg("La rutina debe tener al menos 1 día cargado.");
+                return;
+            }
+
             try
             {
+                // Actualiza la rutina actual con los datos ingresados
+                var r = _controller.ObtenerRutinaActual();
+                r.Nombre = txtNombre.Text.Trim();
+                r.Descripcion = txtDescripcion.Text.Trim();
+
                 _controller.GuardarRutina();
+
                 Msg("Rutina guardada correctamente ✅", "Éxito");
                 Close();
             }
@@ -149,6 +174,7 @@ namespace Gestor_de_Rutinas___GYM.Views
                 Msg($"Error al guardar rutina: {ex.Message}", "Error", MessageBoxIcon.Error);
             }
         }
+
 
         private void CargarEjerciciosBase()
         {

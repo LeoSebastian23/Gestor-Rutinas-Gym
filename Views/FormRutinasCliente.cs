@@ -2,7 +2,6 @@
 using Gestor_de_Rutinas___GYM.Models;
 using Gestor_de_Rutinas___GYM.Utils.Exportar;
 
-
 namespace Gestor_de_Rutinas___GYM.Views
 {
     public partial class FormRutinasCliente : Form
@@ -27,7 +26,6 @@ namespace Gestor_de_Rutinas___GYM.Views
             CargarRutinasDisponibles();
         }
 
-        // ESTILO
         private void ConfigurarEstiloFormulario()
         {
             BackColor = ColorTranslator.FromHtml("#484848");
@@ -74,7 +72,6 @@ namespace Gestor_de_Rutinas___GYM.Views
             b.Cursor = Cursors.Hand;
         }
 
-        // COLUMNAS
         private void ConfigurarColumnasRutinas()
         {
             dgvRutinasAsignadas.AutoGenerateColumns = false;
@@ -104,12 +101,16 @@ namespace Gestor_de_Rutinas___GYM.Views
             dgvRutinasAsignadas.CellClick -= DgvRutinasAsignadas_CellClick;
             dgvRutinasAsignadas.CellClick += DgvRutinasAsignadas_CellClick;
         }
-        // CARGA DE DATOS
+
+        // *** AQUI ESTA EL CAMBIO ***
         private void CargarRutinas()
         {
-            dgvRutinasAsignadas.DataSource =
-                _clienteController.ObtenerRutinasDeCliente(_cliente.IdCliente)
-                ?? new List<Rutina>();
+            var rutinas = _clienteController.ObtenerRutinasDeCliente(_cliente.IdCliente)
+                          ?? new List<Rutina>();
+
+            dgvRutinasAsignadas.DataSource = null;
+            dgvRutinasAsignadas.DataSource = rutinas;
+            dgvRutinasAsignadas.Refresh();
         }
 
         private void CargarRutinasDisponibles()
@@ -120,7 +121,6 @@ namespace Gestor_de_Rutinas___GYM.Views
             cmbRutinasDisponibles.ValueMember = "IdRutina";
         }
 
-        // ACCIONES
         private void btnAsignarRutina_Click(object sender, EventArgs e)
         {
             if (cmbRutinasDisponibles.SelectedItem is not Rutina rutina)
@@ -134,9 +134,7 @@ namespace Gestor_de_Rutinas___GYM.Views
                 _clienteController.AsignarRutina(_cliente.IdCliente, rutina.IdRutina);
 
                 CargarRutinas();
-                dgvRutinasAsignadas.Refresh();
 
-                // Seleccionar automáticamente la rutina recién asignada
                 foreach (DataGridViewRow row in dgvRutinasAsignadas.Rows)
                 {
                     if (row.DataBoundItem is Rutina r && r.IdRutina == rutina.IdRutina)
@@ -153,7 +151,6 @@ namespace Gestor_de_Rutinas___GYM.Views
                 Error("asignar rutina", ex);
             }
         }
-
 
         private void btnEliminarRutina_Click(object sender, EventArgs e)
         {
@@ -173,7 +170,6 @@ namespace Gestor_de_Rutinas___GYM.Views
             }
         }
 
-        // CLICK EN LA TABLA (ABRIR DETALLE)
         private void DgvRutinasAsignadas_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
@@ -192,8 +188,6 @@ namespace Gestor_de_Rutinas___GYM.Views
             detalle.ShowDialog(this);
         }
 
-
-        // HELPERS
         private static void Msg(string t) =>
             MessageBox.Show(t, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -203,46 +197,39 @@ namespace Gestor_de_Rutinas___GYM.Views
         private static void Error(string accion, Exception ex) =>
             MessageBox.Show($"Error al {accion}: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-
-
-private void btnExportarPDF_Click(object sender, EventArgs e)
-    {
-        Exportar("PDF");
-    }
-
-    private void btnExportarExcel_Click(object sender, EventArgs e)
-    {
-        Exportar("EXCEL");
-    }
-
-    private void Exportar(string tipo)
-    {
-        if (dgvRutinasAsignadas.CurrentRow?.DataBoundItem is not Rutina rutina)
+        private void btnExportarPDF_Click(object sender, EventArgs e)
         {
-            Msg("Seleccione una rutina.");
-            return;
+            Exportar("PDF");
         }
 
-        // Obtener la rutina completa
-        var rutinaCompleta = _rutinaController.ObtenerPorId(rutina.IdRutina);
-
-        using var save = new SaveFileDialog
+        private void btnExportarExcel_Click(object sender, EventArgs e)
         {
-            Filter = tipo == "PDF" ? "PDF|*.pdf" : "Excel|*.xlsx",
-            FileName = $"Rutina_{_cliente.Nombre}_{_cliente.Apellido}"
-        };
+            Exportar("EXCEL");
+        }
 
-        if (save.ShowDialog() == DialogResult.OK)
+        private void Exportar(string tipo)
         {
-            var exportador = ExportadorFactory.Crear(tipo);
-            exportador.Exportar(_cliente, rutinaCompleta, save.FileName);
+            if (dgvRutinasAsignadas.CurrentRow?.DataBoundItem is not Rutina rutina)
+            {
+                Msg("Seleccione una rutina.");
+                return;
+            }
 
-            Msg($"{tipo} generado correctamente.");
+            var rutinaCompleta = _rutinaController.ObtenerPorId(rutina.IdRutina);
+
+            using var save = new SaveFileDialog
+            {
+                Filter = tipo == "PDF" ? "PDF|*.pdf" : "Excel|*.xlsx",
+                FileName = $"Rutina_{_cliente.Nombre}_{_cliente.Apellido}"
+            };
+
+            if (save.ShowDialog() == DialogResult.OK)
+            {
+                var exportador = ExportadorFactory.Crear(tipo);
+                exportador.Exportar(_cliente, rutinaCompleta, save.FileName);
+
+                Msg($"{tipo} generado correctamente.");
+            }
         }
     }
-
 }
-}
-
-
-

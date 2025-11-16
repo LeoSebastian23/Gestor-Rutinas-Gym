@@ -1,10 +1,5 @@
 ﻿using Gestor_de_Rutinas___GYM.Models;
 using Gestor_de_Rutinas___GYM.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 // Se encarga solo de coordinar llamadas entre la vista (Forms) y el ClienteService.
 namespace Gestor_de_Rutinas___GYM.Controllers

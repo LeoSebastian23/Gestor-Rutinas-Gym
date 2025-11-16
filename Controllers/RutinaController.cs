@@ -14,6 +14,8 @@ namespace Gestor_de_Rutinas___GYM.Controllers
 
         private Rutina _rutinaActual = new();
 
+        public RutinaController() { }
+
         public void CrearRutina(string nombre, int duracion, string descripcion)
         {
             _rutinaActual = new Rutina(nombre, duracion, descripcion);
@@ -36,12 +38,8 @@ namespace Gestor_de_Rutinas___GYM.Controllers
             if (idRutina <= 0)
                 throw new ArgumentException("ID inválido.", nameof(idRutina));
 
-            var rutina = _rutinaService.ObtenerPorId(idRutina);
-
-            if (rutina == null)
-                throw new Exception($"No se encontró la rutina con ID {idRutina}.");
-
-            return rutina;
+            return _rutinaService.ObtenerPorId(idRutina)
+                ?? throw new Exception($"No se encontró la rutina con ID {idRutina}.");
         }
 
         public void ActualizarRutina(Rutina rutina)
@@ -62,8 +60,7 @@ namespace Gestor_de_Rutinas___GYM.Controllers
 
         public void AgregarDia(string diaSemana, string grupoMuscular)
         {
-            var dia = new DiaEntrenamiento(diaSemana, grupoMuscular);
-            _rutinaActual.Dias.Add(dia);
+            _rutinaActual.Dias.Add(new DiaEntrenamiento(diaSemana, grupoMuscular));
         }
 
         public void EliminarDia(DiaEntrenamiento dia)
@@ -85,8 +82,7 @@ namespace Gestor_de_Rutinas___GYM.Controllers
             if (dia == null)
                 throw new ArgumentNullException(nameof(dia));
 
-            var ejercicio = new Ejercicio(baseEjercicio, series, reps, descanso, notas);
-            dia.Ejercicios.Add(ejercicio);
+            dia.Ejercicios.Add(new Ejercicio(baseEjercicio, series, reps, descanso, notas));
         }
 
         public void EliminarEjercicio(DiaEntrenamiento dia, Ejercicio ejercicio)
@@ -103,6 +99,3 @@ namespace Gestor_de_Rutinas___GYM.Controllers
             => _ejercicioBaseService.ObtenerTodos();
     }
 }
-
-
-

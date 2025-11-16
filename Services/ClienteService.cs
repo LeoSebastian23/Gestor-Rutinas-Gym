@@ -2,11 +2,6 @@
 using Gestor_de_Rutinas___GYM.Models;
 using Gestor_de_Rutinas___GYM.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Gestor_de_Rutinas___GYM.Services
 {
@@ -40,12 +35,17 @@ namespace Gestor_de_Rutinas___GYM.Services
             _repository.Delete(id);
         }
 
+        // Siempre recargar las rutinas desde DB usando un contexto LIMPIO
         public List<Rutina> ObtenerRutinasDeCliente(int idCliente)
         {
-            var cliente = _repository.GetById(idCliente)
+            using var context = new GymContext();
+
+            var cliente = context.Clientes
+                .Include(c => c.Rutinas)
+                .FirstOrDefault(c => c.IdCliente == idCliente)
                 ?? throw new Exception("Cliente no encontrado.");
 
-            return cliente.Rutinas;
+            return cliente.Rutinas.ToList();
         }
 
         public void AsignarRutina(int idCliente, int idRutina)
@@ -87,4 +87,3 @@ namespace Gestor_de_Rutinas___GYM.Services
         }
     }
 }
-

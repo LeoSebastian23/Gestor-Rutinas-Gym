@@ -6,7 +6,7 @@
         private Label lblNombre;
         private TextBox txtNombre;
         private Label lblDuracion;
-        private NumericUpDown numDuracion;
+        private NumericUpDown numDuracionSemana;
         private TextBox txtDescripcion;
         private Button btnCrearRutina;
         private Button btnGuardarRutina;
@@ -36,7 +36,7 @@
             lblNombre = new Label();
             txtNombre = new TextBox();
             lblDuracion = new Label();
-            numDuracion = new NumericUpDown();
+            numDuracionSemana = new NumericUpDown();
             txtDescripcion = new TextBox();
             btnCrearRutina = new Button();
             btnNuevoEjercicioBase = new Button();
@@ -59,7 +59,7 @@
             label4 = new Label();
             label5 = new Label();
             label6 = new Label();
-            ((System.ComponentModel.ISupportInitialize)numDuracion).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numDuracionSemana).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvDias).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvEjercicios).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numSeries).BeginInit();
@@ -94,15 +94,15 @@
             lblDuracion.TabIndex = 2;
             lblDuracion.Text = "Semanas:";
             // 
-            // numDuracion
+            // numDuracionSemana
             // 
-            numDuracion.Location = new Point(391, 18);
-            numDuracion.Maximum = new decimal(new int[] { 52, 0, 0, 0 });
-            numDuracion.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numDuracion.Name = "numDuracion";
-            numDuracion.Size = new Size(120, 27);
-            numDuracion.TabIndex = 3;
-            numDuracion.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            numDuracionSemana.Location = new Point(391, 18);
+            numDuracionSemana.Maximum = new decimal(new int[] { 52, 0, 0, 0 });
+            numDuracionSemana.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numDuracionSemana.Name = "numDuracionSemana";
+            numDuracionSemana.Size = new Size(120, 27);
+            numDuracionSemana.TabIndex = 3;
+            numDuracionSemana.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // txtDescripcion
             // 
@@ -321,7 +321,7 @@
             Controls.Add(lblNombre);
             Controls.Add(txtNombre);
             Controls.Add(lblDuracion);
-            Controls.Add(numDuracion);
+            Controls.Add(numDuracionSemana);
             Controls.Add(txtDescripcion);
             Controls.Add(btnCrearRutina);
             Controls.Add(btnAgregarDia);
@@ -339,7 +339,7 @@
             Name = "FormRutina";
             Text = "Gestión de Rutinas";
             Load += FormRutina_Load;
-            ((System.ComponentModel.ISupportInitialize)numDuracion).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numDuracionSemana).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvDias).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvEjercicios).EndInit();
             ((System.ComponentModel.ISupportInitialize)numSeries).EndInit();
