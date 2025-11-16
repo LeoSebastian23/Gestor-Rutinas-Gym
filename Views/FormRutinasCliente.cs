@@ -1,7 +1,7 @@
 ﻿using Gestor_de_Rutinas___GYM.Controllers;
 using Gestor_de_Rutinas___GYM.Models;
-using System.Drawing;
-using System.Windows.Forms;
+using Gestor_de_Rutinas___GYM.Utils.Exportar;
+
 
 namespace Gestor_de_Rutinas___GYM.Views
 {
@@ -182,13 +182,16 @@ namespace Gestor_de_Rutinas___GYM.Views
             if (dgvRutinasAsignadas.Rows[e.RowIndex].DataBoundItem is not Rutina rutina)
                 return;
 
-            var detalle = new FormRutinaDetalle(rutina)
+            var rutinaCompleta = _rutinaController.ObtenerPorId(rutina.IdRutina);
+
+            var detalle = new FormRutinaDetalle(rutinaCompleta)
             {
                 StartPosition = FormStartPosition.CenterParent
             };
 
             detalle.ShowDialog(this);
         }
+
 
         // HELPERS
         private static void Msg(string t) =>
@@ -199,7 +202,46 @@ namespace Gestor_de_Rutinas___GYM.Views
 
         private static void Error(string accion, Exception ex) =>
             MessageBox.Show($"Error al {accion}: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+
+
+private void btnExportarPDF_Click(object sender, EventArgs e)
+    {
+        Exportar("PDF");
     }
+
+    private void btnExportarExcel_Click(object sender, EventArgs e)
+    {
+        Exportar("EXCEL");
+    }
+
+    private void Exportar(string tipo)
+    {
+        if (dgvRutinasAsignadas.CurrentRow?.DataBoundItem is not Rutina rutina)
+        {
+            Msg("Seleccione una rutina.");
+            return;
+        }
+
+        // Obtener la rutina completa
+        var rutinaCompleta = _rutinaController.ObtenerPorId(rutina.IdRutina);
+
+        using var save = new SaveFileDialog
+        {
+            Filter = tipo == "PDF" ? "PDF|*.pdf" : "Excel|*.xlsx",
+            FileName = $"Rutina_{_cliente.Nombre}_{_cliente.Apellido}"
+        };
+
+        if (save.ShowDialog() == DialogResult.OK)
+        {
+            var exportador = ExportadorFactory.Crear(tipo);
+            exportador.Exportar(_cliente, rutinaCompleta, save.FileName);
+
+            Msg($"{tipo} generado correctamente.");
+        }
+    }
+
+}
 }
 
 

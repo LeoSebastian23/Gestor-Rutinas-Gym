@@ -4,13 +4,10 @@ namespace Gestor_de_Rutinas___GYM
 {
     internal static class Program
     {
+        [STAThread]   // PARA SAVEFILEDIALOG, EXCEL y PDF
         static void Main()
         {
-
-            // Inicializa la configuración de la aplicación
             ApplicationConfiguration.Initialize();
-
-            // Abre Menu Principal
             Application.Run(new MenuPrincipal());
         }
     }

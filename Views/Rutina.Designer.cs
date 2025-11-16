@@ -360,4 +360,3 @@
         private Label label6;
     }
 }
-

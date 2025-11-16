@@ -1,4 +1,6 @@
 ﻿using Gestor_de_Rutinas___GYM.Models;
+using iTextSharp.text;
+
 
 namespace Gestor_de_Rutinas___GYM.Views
 {
@@ -6,9 +8,10 @@ namespace Gestor_de_Rutinas___GYM.Views
     {
         private readonly Rutina _rutina;
 
-        // 🎨 PALETA OFICIAL
+        // 
         private readonly Color cFondo = ColorTranslator.FromHtml("#484848");
         private readonly Color cPrimario = ColorTranslator.FromHtml("#0f928c");
+        private readonly Color cSeleccionSuave = Color.FromArgb(35, 150, 160); // selección sutil
 
         public FormRutinaDetalle(Rutina rutina)
         {
@@ -23,10 +26,12 @@ namespace Gestor_de_Rutinas___GYM.Views
 
             CargarDias();
 
-            // Evento: cambiar día → carga ejercicios
+            // Selección cambiar día → actualizar ejercicios
             dgvDias.SelectionChanged += (_, _) => CargarEjercicios();
-        }
 
+            // Apenas cargamos → mostramos ejercicios del primer día automáticamente
+            CargarEjercicios();
+        }
 
         // -------------------- CARGA DÍAS --------------------
 
@@ -42,14 +47,11 @@ namespace Gestor_de_Rutinas___GYM.Views
                 Ref = d
             }).ToList();
 
-            // Oculta la columna interna
             dgvDias.Columns["Ref"].Visible = false;
 
-            // Selecciona automáticamente el primer día
             if (dgvDias.Rows.Count > 0)
                 dgvDias.Rows[0].Selected = true;
         }
-
 
         // -------------------- CARGA EJERCICIOS --------------------
 
@@ -67,11 +69,10 @@ namespace Gestor_de_Rutinas___GYM.Views
                 Ejercicio = e.EjercicioBase?.Nombre ?? "Ejercicio",
                 Series = e.Series,
                 Repeticiones = e.Repeticiones,
-                Descanso = $"{e.Descanso} seg",
+                Descanso = $"{e.Descanso} min",   // ⏱️ descanso en minutos
                 Notas = e.Notas ?? ""
             }).ToList();
         }
-
 
         // -------------------- ESTILO --------------------
 
@@ -80,14 +81,14 @@ namespace Gestor_de_Rutinas___GYM.Views
             BackColor = cFondo;
 
             lblTitulo.ForeColor = Color.White;
-            lblTitulo.Font = new Font("Segoe UI", 18, FontStyle.Bold);
+            lblTitulo.Font = new System.Drawing.Font("Segoe UI", 18, FontStyle.Bold);
             lblTitulo.BackColor = Color.FromArgb(60, 60, 60);
             lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
 
             EstilizarGrid(dgvDias);
             EstilizarGrid(dgvEjercicios);
 
-            // Botón cerrar acorde a tu paleta
+            // Botón cerrar
             btnCerrar.BackColor = cPrimario;
             btnCerrar.ForeColor = Color.White;
             btnCerrar.FlatStyle = FlatStyle.Flat;
@@ -100,6 +101,10 @@ namespace Gestor_de_Rutinas___GYM.Views
             dgv.DefaultCellStyle.BackColor = Color.FromArgb(55, 55, 55);
             dgv.DefaultCellStyle.ForeColor = Color.White;
 
+            // 🎨 Selección suave y elegante
+            dgv.DefaultCellStyle.SelectionBackColor = cSeleccionSuave;
+            dgv.DefaultCellStyle.SelectionForeColor = Color.White;
+
             dgv.EnableHeadersVisualStyles = false;
             dgv.ColumnHeadersDefaultCellStyle.BackColor = cPrimario;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
@@ -109,9 +114,13 @@ namespace Gestor_de_Rutinas___GYM.Views
             dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
-        private void btnCerrar_Click(object sender, EventArgs e) => Close();
+
+
+
+    private void btnCerrar_Click(object sender, EventArgs e) => Close();
     }
 }
+
 
 
 

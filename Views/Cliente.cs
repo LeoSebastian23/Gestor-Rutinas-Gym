@@ -83,8 +83,14 @@ namespace Gestor_de_Rutinas___GYM.Views
                 .ToList();
 
             dgvClientes.DataSource = clientes;
+
+            // Asegura que la columna del botón exista una sola vez
+            if (!dgvClientes.Columns.Contains("btnVerRutinas"))
+                ConfigurarColumnaRutinas();
+
             dgvClientes.Columns["IdCliente"].Visible = false;
         }
+
 
 
         private void ConfigurarColumnaRutinas()
@@ -217,18 +223,33 @@ namespace Gestor_de_Rutinas___GYM.Views
         // ≡ EVENTOS EXTRA ======================================================
         private void DgvClientes_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0) return;
-            if (dgvClientes.Columns[e.ColumnIndex].Name != "btnVerRutinas") return;
+            // Evita clics inválidos
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
 
-            int id = (int)dgvClientes.Rows[e.RowIndex].Cells["IdCliente"].Value;
+            // Verifica si la columna del botón existe antes de acceder
+            var columna = dgvClientes.Columns[e.ColumnIndex];
+            if (columna == null || columna.Name != "btnVerRutinas") return;
+
+            // Asegura que haya datos en la fila
+            if (e.RowIndex >= dgvClientes.Rows.Count) return;
+
+            // Recupera el IdCliente de forma segura
+            var fila = dgvClientes.Rows[e.RowIndex];
+            if (!fila.Cells.Contains(fila.Cells["IdCliente"])) return;
+
+            int id = Convert.ToInt32(fila.Cells["IdCliente"].Value);
             var cliente = _controller.BuscarPorId(id);
             if (cliente == null) return;
 
-            new FormRutinasCliente(cliente)
+            using var form = new FormRutinasCliente(cliente)
             {
                 StartPosition = FormStartPosition.CenterParent
-            }.ShowDialog(this);
+            };
+            form.ShowDialog(this);
+
+            CargarClientes(); // refresca la grilla
         }
+
 
 
         // ≡ HELPERS ============================================================
@@ -259,7 +280,3 @@ namespace Gestor_de_Rutinas___GYM.Views
         }
     }
 }
-
-
-
-

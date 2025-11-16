@@ -1,5 +1,6 @@
 ﻿using Gestor_de_Rutinas___GYM.Controllers;
 using Gestor_de_Rutinas___GYM.Models;
+using Gestor_de_Rutinas___GYM.Utils.Exportar;
 
 namespace Gestor_de_Rutinas___GYM.Views
 {
@@ -76,7 +77,7 @@ namespace Gestor_de_Rutinas___GYM.Views
                 CargarRutinas();
             }
         }
-        
+
         // -------------------- AUXILIARES --------------------
         private bool TryGetRutina(out Rutina rutina)
         {
@@ -148,7 +149,37 @@ namespace Gestor_de_Rutinas___GYM.Views
         }
 
         private void btnCerrar_Click(object sender, EventArgs e) => Close();
+
+
+        private void btnExportarPDF_Click(object sender, EventArgs e)
+        {
+            Exportar("PDF");
+        }
+
+        private void btnExportarExcel_Click(object sender, EventArgs e)
+        {
+            Exportar("EXCEL");
+        }
+    private void Exportar(string tipo)
+        {
+            if (!TryGetRutina(out var rutina))
+                return;
+
+            using var save = new SaveFileDialog
+            {
+                Filter = tipo == "PDF" ? "PDF|*.pdf" : "Excel|*.xlsx",
+                FileName = $"Rutina_{rutina.Nombre}"
+            };
+
+            if (save.ShowDialog() == DialogResult.OK)
+            {
+                var exportador = ExportadorFactory.Crear(tipo);
+                exportador.Exportar(null, rutina, save.FileName);
+
+                Msg($"{tipo} generado correctamente.");
+            }
+        }
     }
-}
+    }
 
 

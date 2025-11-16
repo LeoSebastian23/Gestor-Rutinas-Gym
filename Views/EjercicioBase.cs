@@ -1,18 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-using System;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using Gestor_de_Rutinas___GYM.Controllers;
+﻿using Gestor_de_Rutinas___GYM.Controllers;
 using Gestor_de_Rutinas___GYM.Models;
 
 namespace Gestor_de_Rutinas___GYM.Views
@@ -21,69 +7,86 @@ namespace Gestor_de_Rutinas___GYM.Views
     {
         private readonly EjercicioBaseController _controller = new();
 
+        // PALETA OFICIAL
+        private readonly Color cFondo = ColorTranslator.FromHtml("#484848");
+        private readonly Color cPrimario = ColorTranslator.FromHtml("#0f928c");
+        private readonly Color cSecundario = ColorTranslator.FromHtml("#006465");
+        private readonly Color cHover = ColorTranslator.FromHtml("#00c9d2");
+        private readonly Color cAcento = ColorTranslator.FromHtml("#beee3b");
+
         public FormEjercicioBase()
         {
             InitializeComponent();
-            PostInitStyleSafe();
+            EstilizarFormulario();
         }
 
-        private void PostInitStyleSafe()
+        // -------------------- ESTILO GENERAL --------------------
+
+        private void EstilizarFormulario()
         {
-            BackColor = Color.FromArgb(30, 30, 30);
+            BackColor = cFondo;
             ForeColor = Color.White;
 
-            lblTitulo.Font = new Font("Segoe UI", 20, FontStyle.Bold);
-            lblTitulo.ForeColor = Color.White;
-            lblTitulo.BackColor = Color.FromArgb(45, 45, 45);
-            lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
+            EstilizarTitulo(lblTitulo);
+            EstilizarPanel(panelCampos);
+            EstilizarGrid(dgvEjercicios);
 
-            panelCampos.BackColor = Color.FromArgb(40, 40, 40);
+            EstilizarBoton(btnAgregar, cPrimario);
+            EstilizarBoton(btnEliminar, Color.FromArgb(231, 76, 60)); // rojo elegante
 
-            EstilizarDataGrid(dgvEjercicios);
-            StyleButton(btnAgregar, Color.FromArgb(46, 204, 113));
-            StyleButton(btnEliminar, Color.FromArgb(231, 76, 60));
-            StyleButton(btnVerTodos, Color.FromArgb(155, 89, 182));
-
+            // Estilo general para todos los TextBox dentro del panel
             foreach (Control c in panelCampos.Controls)
             {
-                if (c is Label lbl) lbl.ForeColor = Color.White;
                 if (c is TextBox txt)
                 {
-                    txt.BackColor = Color.FromArgb(50, 50, 50);
+                    txt.BackColor = Color.FromArgb(55, 55, 55);
                     txt.ForeColor = Color.White;
                     txt.BorderStyle = BorderStyle.FixedSingle;
                 }
             }
         }
 
-        private static void EstilizarDataGrid(DataGridView dgv)
+        private void EstilizarTitulo(Label lbl)
         {
-            dgv.BackgroundColor = Color.FromArgb(25, 25, 25);
-            dgv.BorderStyle = BorderStyle.None;
-            dgv.EnableHeadersVisualStyles = false;
-            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 152, 219);
-            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgv.DefaultCellStyle.BackColor = Color.FromArgb(40, 40, 40);
-            dgv.DefaultCellStyle.ForeColor = Color.White;
-            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(64, 64, 64);
-            dgv.RowHeadersVisible = false;
-            dgv.GridColor = Color.DimGray;
-            dgv.Font = new Font("Segoe UI", 10);
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            lbl.Font = new Font("Segoe UI", 20, FontStyle.Bold);
+            lbl.TextAlign = ContentAlignment.MiddleCenter;
+            lbl.BackColor = Color.FromArgb(60, 60, 60);
         }
 
-        private static void StyleButton(Button b, Color color)
+        private void EstilizarPanel(Panel p)
+        {
+            p.BackColor = Color.FromArgb(55, 55, 55);
+        }
+
+        private void EstilizarBoton(Button b, Color color)
         {
             b.BackColor = color;
+            b.ForeColor = Color.White;
             b.FlatStyle = FlatStyle.Flat;
             b.FlatAppearance.BorderSize = 0;
-            b.ForeColor = Color.White;
             b.Font = new Font("Segoe UI", 10, FontStyle.Bold);
             b.Cursor = Cursors.Hand;
             b.Height = 36;
         }
 
-        // --- EVENTOS ---
+        private void EstilizarGrid(DataGridView dgv)
+        {
+            dgv.BackgroundColor = Color.FromArgb(70, 70, 70);
+            dgv.DefaultCellStyle.BackColor = Color.FromArgb(50, 50, 50);
+            dgv.DefaultCellStyle.ForeColor = Color.White;
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(25, 130, 140);
+
+            dgv.EnableHeadersVisualStyles = false;
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = cPrimario;
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+
+            dgv.RowHeadersVisible = false;
+            dgv.BorderStyle = BorderStyle.None;
+            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
+
+        // -------------------- EVENTOS --------------------
+
         private void FormEjercicioBase_Load(object sender, EventArgs e)
         {
             CargarEjercicios();
@@ -96,35 +99,36 @@ namespace Gestor_de_Rutinas___GYM.Views
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(txtGrupo.Text))
+            if (string.IsNullOrWhiteSpace(txtNombre.Text) ||
+                string.IsNullOrWhiteSpace(txtGrupo.Text))
             {
-                MessageBox.Show("Por favor, complete los campos requeridos.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Por favor, complete los campos requeridos.", "Aviso");
                 return;
             }
 
-            _controller.CrearEjercicioBase(txtNombre.Text, txtGrupo.Text, txtDescripcion.Text);
+            _controller.CrearEjercicioBase(
+                txtNombre.Text,
+                txtGrupo.Text,
+                txtDescripcion.Text
+            );
+
             CargarEjercicios();
             LimpiarCampos();
 
-            MessageBox.Show("Ejercicio agregado correctamente.", "Éxito",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Ejercicio agregado correctamente.", "Éxito");
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
             if (dgvEjercicios.CurrentRow == null) return;
 
+            if (MessageBox.Show("¿Desea eliminar el ejercicio seleccionado?",
+                "Confirmar", MessageBoxButtons.YesNo) == DialogResult.No) return;
+
             var ejercicio = (EjercicioBase)dgvEjercicios.CurrentRow.DataBoundItem;
+            _controller.EliminarEjercicio(ejercicio.IdEjercicioBase);
 
-            var confirm = MessageBox.Show($"¿Desea eliminar el ejercicio '{ejercicio.Nombre}'?",
-                "Confirmar eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-            if (confirm == DialogResult.Yes)
-            {
-                _controller.EliminarEjercicio(ejercicio.IdEjercicioBase);
-                CargarEjercicios();
-            }
+            CargarEjercicios();
         }
 
         private void LimpiarCampos()
@@ -133,8 +137,14 @@ namespace Gestor_de_Rutinas___GYM.Views
             txtGrupo.Clear();
             txtDescripcion.Clear();
         }
+
+        private void lblNombre_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
+
 
 
 

@@ -4,12 +4,13 @@
     {
         private System.ComponentModel.IContainer components = null;
         private Label lblTitulo;
-        private DataGridView dgvRutinas;
-        private Button btnVerDetalle;
         private Button btnVerDias;
         private Button btnModificar;
         private Button btnEliminar;
         private Button btnCerrar;
+        private Button btnExportarPDF;
+        private Button btnExportarExcel;
+        private DataGridView dgvRutinas;
 
         protected override void Dispose(bool disposing)
         {
@@ -20,12 +21,13 @@
         private void InitializeComponent()
         {
             lblTitulo = new Label();
-            dgvRutinas = new DataGridView();
-            btnVerDetalle = new Button();
             btnVerDias = new Button();
             btnModificar = new Button();
             btnEliminar = new Button();
             btnCerrar = new Button();
+            btnExportarPDF = new Button();
+            btnExportarExcel = new Button();
+            dgvRutinas = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)dgvRutinas).BeginInit();
             SuspendLayout();
             // 
@@ -46,21 +48,37 @@
             // 
             dgvRutinas.AllowUserToAddRows = false;
             dgvRutinas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dgvRutinas.ColumnHeadersHeight = 29;
+            dgvRutinas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvRutinas.Location = new Point(30, 80);
             dgvRutinas.Name = "dgvRutinas";
             dgvRutinas.ReadOnly = true;
             dgvRutinas.RowHeadersWidth = 51;
-            dgvRutinas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvRutinas.Size = new Size(840, 380);
+            dgvRutinas.Size = new Size(840, 340);
             dgvRutinas.TabIndex = 1;
             // 
-            // btnVerDetalle
+            // btnExportarPDF
             // 
-            btnVerDetalle.Location = new Point(0, 0);
-            btnVerDetalle.Name = "btnVerDetalle";
-            btnVerDetalle.Size = new Size(75, 23);
-            btnVerDetalle.TabIndex = 2;
+            btnExportarPDF.BackColor = Color.FromArgb(15, 146, 140);
+            btnExportarPDF.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnExportarPDF.Location = new Point(30, 430);
+            btnExportarPDF.Name = "btnExportarPDF";
+            btnExportarPDF.Size = new Size(120, 40);
+            btnExportarPDF.TabIndex = 2;
+            btnExportarPDF.Text = "📄 PDF";
+            btnExportarPDF.UseVisualStyleBackColor = false;
+            btnExportarPDF.Click += btnExportarPDF_Click;
+            // 
+            // btnExportarExcel
+            // 
+            btnExportarExcel.BackColor = Color.FromArgb(0, 100, 101);
+            btnExportarExcel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnExportarExcel.Location = new Point(170, 430);
+            btnExportarExcel.Name = "btnExportarExcel";
+            btnExportarExcel.Size = new Size(120, 40);
+            btnExportarExcel.TabIndex = 3;
+            btnExportarExcel.Text = "📊 Excel";
+            btnExportarExcel.UseVisualStyleBackColor = false;
+            btnExportarExcel.Click += btnExportarExcel_Click;
             // 
             // btnVerDias
             // 
@@ -68,7 +86,7 @@
             btnVerDias.Location = new Point(30, 480);
             btnVerDias.Name = "btnVerDias";
             btnVerDias.Size = new Size(248, 60);
-            btnVerDias.TabIndex = 3;
+            btnVerDias.TabIndex = 4;
             btnVerDias.Text = "Ver Días / Ejercicios";
             btnVerDias.Click += btnVerDias_Click;
             // 
@@ -78,7 +96,7 @@
             btnModificar.Location = new Point(494, 480);
             btnModificar.Name = "btnModificar";
             btnModificar.Size = new Size(154, 60);
-            btnModificar.TabIndex = 4;
+            btnModificar.TabIndex = 5;
             btnModificar.Text = "Modificar";
             btnModificar.Click += btnModificar_Click;
             // 
@@ -88,7 +106,7 @@
             btnEliminar.Location = new Point(654, 480);
             btnEliminar.Name = "btnEliminar";
             btnEliminar.Size = new Size(130, 60);
-            btnEliminar.TabIndex = 5;
+            btnEliminar.TabIndex = 6;
             btnEliminar.Text = "Eliminar";
             btnEliminar.Click += btnEliminar_Click;
             // 
@@ -98,7 +116,7 @@
             btnCerrar.Location = new Point(790, 480);
             btnCerrar.Name = "btnCerrar";
             btnCerrar.Size = new Size(80, 60);
-            btnCerrar.TabIndex = 6;
+            btnCerrar.TabIndex = 7;
             btnCerrar.Text = "Cerrar";
             btnCerrar.Click += btnCerrar_Click;
             // 
@@ -108,14 +126,14 @@
             ClientSize = new Size(900, 600);
             Controls.Add(lblTitulo);
             Controls.Add(dgvRutinas);
-            Controls.Add(btnVerDetalle);
+            Controls.Add(btnExportarPDF);
+            Controls.Add(btnExportarExcel);
             Controls.Add(btnVerDias);
             Controls.Add(btnModificar);
             Controls.Add(btnEliminar);
             Controls.Add(btnCerrar);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            Name = "FormListadoRutinas";
-            StartPosition = FormStartPosition.CenterParent;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Listado de Rutinas";
             Load += FormListadoRutinas_Load;
             ((System.ComponentModel.ISupportInitialize)dgvRutinas).EndInit();

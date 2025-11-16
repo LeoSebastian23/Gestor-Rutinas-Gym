@@ -2,19 +2,15 @@
 {
     partial class FormRutinaDetalle
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         private Label lblTitulo;
         private DataGridView dgvDias;
         private DataGridView dgvEjercicios;
         private Button btnCerrar;
+        private Button btnExportarPdf;
 
-        /// <summary>
-        ///  Clean up any resources.
-        /// </summary>
+
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -101,6 +97,8 @@
             this.Name = "FormRutinaDetalle";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Detalle de Rutina";
+
+
 
             // 🔥 ESTA LINEA ERA LA QUE FALTABA 🔥
             this.Load += new System.EventHandler(this.FormRutinaDetalle_Load);

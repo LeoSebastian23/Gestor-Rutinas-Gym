@@ -16,7 +16,6 @@ namespace Gestor_de_Rutinas___GYM.Views
         private TextBox txtDescripcion;
         private Button btnAgregar;
         private Button btnEliminar;
-        private Button btnVerTodos;
         private DataGridView dgvEjercicios;
 
         protected override void Dispose(bool disposing)
@@ -31,14 +30,13 @@ namespace Gestor_de_Rutinas___GYM.Views
             lblTitulo = new Label();
             panelCampos = new Panel();
             lblNombre = new Label();
+            btnAgregar = new Button();
             txtNombre = new TextBox();
+            btnEliminar = new Button();
             lblGrupo = new Label();
             txtGrupo = new TextBox();
-            btnVerTodos = new Button();
             lblDescripcion = new Label();
             txtDescripcion = new TextBox();
-            btnAgregar = new Button();
-            btnEliminar = new Button();
             dgvEjercicios = new DataGridView();
             panelCampos.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvEjercicios).BeginInit();
@@ -62,7 +60,6 @@ namespace Gestor_de_Rutinas___GYM.Views
             panelCampos.Controls.Add(btnEliminar);
             panelCampos.Controls.Add(lblGrupo);
             panelCampos.Controls.Add(txtGrupo);
-            panelCampos.Controls.Add(btnVerTodos);
             panelCampos.Controls.Add(lblDescripcion);
             panelCampos.Controls.Add(txtDescripcion);
             panelCampos.Dock = DockStyle.Top;
@@ -80,6 +77,16 @@ namespace Gestor_de_Rutinas___GYM.Views
             lblNombre.Size = new Size(67, 20);
             lblNombre.TabIndex = 0;
             lblNombre.Text = "Nombre:";
+            lblNombre.Click += lblNombre_Click;
+            // 
+            // btnAgregar
+            // 
+            btnAgregar.Location = new Point(532, 120);
+            btnAgregar.Name = "btnAgregar";
+            btnAgregar.Size = new Size(109, 34);
+            btnAgregar.TabIndex = 1;
+            btnAgregar.Text = "Agregar";
+            btnAgregar.Click += btnAgregar_Click;
             // 
             // txtNombre
             // 
@@ -87,6 +94,15 @@ namespace Gestor_de_Rutinas___GYM.Views
             txtNombre.Name = "txtNombre";
             txtNombre.Size = new Size(250, 27);
             txtNombre.TabIndex = 1;
+            // 
+            // btnEliminar
+            // 
+            btnEliminar.Location = new Point(659, 120);
+            btnEliminar.Name = "btnEliminar";
+            btnEliminar.Size = new Size(111, 34);
+            btnEliminar.TabIndex = 3;
+            btnEliminar.Text = "Eliminar";
+            btnEliminar.Click += btnEliminar_Click;
             // 
             // lblGrupo
             // 
@@ -104,13 +120,6 @@ namespace Gestor_de_Rutinas___GYM.Views
             txtGrupo.Size = new Size(250, 27);
             txtGrupo.TabIndex = 3;
             // 
-            // btnVerTodos
-            // 
-            btnVerTodos.Location = new Point(0, 0);
-            btnVerTodos.Name = "btnVerTodos";
-            btnVerTodos.Size = new Size(75, 23);
-            btnVerTodos.TabIndex = 4;
-            // 
             // lblDescripcion
             // 
             lblDescripcion.AutoSize = true;
@@ -127,24 +136,6 @@ namespace Gestor_de_Rutinas___GYM.Views
             txtDescripcion.Name = "txtDescripcion";
             txtDescripcion.Size = new Size(650, 52);
             txtDescripcion.TabIndex = 5;
-            // 
-            // btnAgregar
-            // 
-            btnAgregar.Location = new Point(532, 120);
-            btnAgregar.Name = "btnAgregar";
-            btnAgregar.Size = new Size(109, 34);
-            btnAgregar.TabIndex = 1;
-            btnAgregar.Text = "Agregar";
-            btnAgregar.Click += btnAgregar_Click;
-            // 
-            // btnEliminar
-            // 
-            btnEliminar.Location = new Point(659, 120);
-            btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(111, 34);
-            btnEliminar.TabIndex = 3;
-            btnEliminar.Text = "Eliminar";
-            btnEliminar.Click += btnEliminar_Click;
             // 
             // dgvEjercicios
             // 
